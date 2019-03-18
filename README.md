@@ -44,7 +44,7 @@ class Solution:
         :rtype: List[int]
         """
         a = dict()
-        for k,v in enumerate(nums):   # enumerate()方法将可迭代对象组合成一个索引序列
+        for k,v in enumerate(nums):   # enumerate()方法将可迭代对象组合成一个索引序列  
             other_num = target - v
             if other_num in a.keys():
                 return [a[other_num],k]
@@ -142,8 +142,23 @@ class Solution:
             cur.val = cur.val % 10
             
         return l3
+        # 另一个版本：
+        # l3 = l1
+        # while l1:
+        #     l1.val = l1.val + l2.val
+        #     if l1.val > 9 and l1.next:
+        #         l1.val, l1.next.val = l1.val%10, l1.next.val+1
+        #     elif l1.val > 9:
+        #         l1.val = l1.val%10
+        #         l1.next = ListNode(1)
+        #     if l1.next and not l2.next:
+        #         l2.next = ListNode(0)
+        #     elif l2.next and not l1.next:
+        #         l1.next = ListNode(0)
+        #     l1, l2 = l1.next, l2.next
+        # return l3
 ```
-执行用时 : 124 ms  (多次测试，结果不一致，196ms，204ms，220ms)
+执行用时 : 124 ms  (多次测试，结果不一致，196ms，204ms，220ms)  
 内存消耗 : 13.2 MB  
 贴一下网上96ms（我提交后是184ms）的代码：
 ```python
@@ -177,3 +192,105 @@ class Solution:
             node.next = ListNode(add)
         return l3.next
 ```
+
+#### 3 无重复字符的最长子串  
+给定一个字符串，请你找出其中不含有重复字符的` 最长子串 `的长度。  
+
+示例 1:
+```
+输入: "abcabcbb"
+输出: 3 
+解释: 因为无重复字符的最长子串是 "abc"，所以其长度为 3。
+```
+示例 2:
+```
+输入: "bbbbb"
+输出: 1
+解释: 因为无重复字符的最长子串是 "b"，所以其长度为 1。
+```
+示例 3:
+```
+输入: "pwwkew"
+输出: 3
+解释: 因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+     请注意，你的答案必须是 子串 的长度，"pwke" 是一个子序列，不是子串。
+```
+
+分析思路一：遍历str，新建列表存储子串，将新字符入栈，如果新的字符不在子集中，不做处理；如果在，删除子集中字符及之前的字符；
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        max_length = 0
+        max_list = list()
+        for i in s:
+            if i in max_list:
+                max_list = max_list[max_list.index(i)+1:]
+                max_list.append(i)
+            else:
+                max_list.append(i)
+                max_length = max(len(max_list),max_length)
+        return max_length
+```
+最优代码： 使用字符串存储子集
+```python
+class Solution:
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        substring = ''
+        longestlength = 0
+
+        for le in s:
+            if le not in substring:
+                substring = substring + le
+            else:
+                longestlength = max(len(substring),longestlength)
+                substring = substring[substring.index(le)+1:]
+                substring = substring + le
+        longestlength = max(len(substring),longestlength)
+
+        return longestlength
+```
+
+### 4 寻找两个有序数组的中位数  
+给定两个大小为` m `和` n `的有序数组` nums1 `和` nums2`。
+
+请你找出这两个有序数组的中位数，并且要求算法的时间复杂度为` O(log(m + n))`。
+
+你可以假设` nums1 `和` nums2 `不会同时为空。
+
+示例 1:
+```
+nums1 = [1, 3]
+nums2 = [2]
+
+则中位数是 2.0
+```
+示例 2:
+```
+nums1 = [1, 2]
+nums2 = [3, 4]
+
+则中位数是 (2 + 3)/2 = 2.5
+```
+分析思路：合并数组后，根据数组长度的奇偶性，返回不同的值
+```python
+class Solution:
+    def findMedianSortedArrays(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
+        nums3 = sorted(nums1+nums2)
+        length = len(nums3)
+        mid_index = int(length / 2)
+        return (nums3[mid_index-1]+nums3[mid_index])/2 if mid_index==length/2 else nums3[mid_index]
+```
+
