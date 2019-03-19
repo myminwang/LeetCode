@@ -4,6 +4,7 @@
    * [2 两数相加](#2-两数相加) 
    * [3 无重复字符的最长子串](#3-无重复字符的最长子串) 
    * [4 寻找两个有序数组的中位数](#4-寻找两个有序数组的中位数) 
+   * [5 最长回文子串](#5-最长回文子串) 
 
   
 
@@ -295,4 +296,89 @@ class Solution:
         mid_index = int(length / 2)
         return (nums3[mid_index-1]+nums3[mid_index])/2 if mid_index==length/2 else nums3[mid_index]
 ```
+
+### 5 最长回文子串  
+
+给定一个字符串` s`，找到` s `中最长的回文子串。你可以假设` s `的最大长度为` 1000`。
+
+示例 1：
+```
+输入: "babad"
+输出: "bab"
+注意: "aba" 也是一个有效答案。
+```
+示例 2：
+```
+输入: "cbbd"
+输出: "bb"
+```
+思路一：多层循环，从头遍历字符串中每个元素，得到s[i]再从该元素后面的子串进行从尾部遍历，获取同s[i]相等的元素，判断是否是回文子串
+```python
+class Solution:
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        if len(s) <= 1:
+            return s
+        max_length = 0
+        max_str = s[0]
+        for i in range(len(s)):   # 从头遍历字符串
+            if max_length > len(s)-i:
+                break
+            j = -1
+            for j in range(len(s)-1,i,-1):   # 从尾部遍历字符串，获取与s[i]相同的值
+                if j-i+1 > max_length and s[i] == s[j]:
+                    flag = True
+                    for  n in range(0,int((j-i+1)/2)):   # 进行回文子串判断
+                        if s[i+n] != s[j-n]:
+                            flag = False
+                            break
+                    if flag:
+                        max_length = j-i+1
+                        max_str = s[i:j+1]
+        return max_str
+```
+提交超时，使用Pycharm检测通过
+
+(网上)思路二：中心枚举，首先将回文子串变成奇数串，使用#填充` #a#b#c# `,` #a#d#c#f# `，从新字符串的第三个元素开始遍历至倒数第三个，假定遍历的元素是回文子串的中心位置，从中心
+位置向两端遍历，判断是否为回文子串，这样相对思路一，少一层遍历：
+
+最优代码：
+```python
+class Solution:
+    def longestPalindrome(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
+        length = len(s)
+        if length < 2 or s == s[::-1]: return s
+        max_len, begin = 1, 0
+        for i in range(1, length):
+            odd = s[i - max_len - 1:i + 1]
+            even = s[i - max_len:i + 1]
+            if i - max_len >= 1 and odd == odd[::-1]:
+                begin = i - max_len - 1
+                max_len += 2
+                continue
+            if i - max_len >= 0 and even == even[::-1]:
+                begin = i - max_len
+                max_len += 1
+        return s[begin:begin + max_len]
+```
+执行用时 : 76 ms  
+内存消耗 : 13.2 MB  
+
+
+
+
+
+
+
+
+
+
+
 
