@@ -5,6 +5,18 @@
    * [3 无重复字符的最长子串](#3-无重复字符的最长子串) 
    * [4 寻找两个有序数组的中位数](#4-寻找两个有序数组的中位数) 
    * [5 最长回文子串](#5-最长回文子串) 
+   * [6 Z字形变换](#6-Z字形变换) 
+   * [7 整数反转](#7-整数反转) 
+   * [8 字符串转换整数 (atoi) ](#8-字符串转换整数) 
+   * [9 回文数](#9-回文数) 
+   * [10 正则表达式匹配](#10-正则表达式匹配) 
+   * [12 整数转罗马数字](#12-整数转罗马数字) 
+   * [13 罗马数字转整数](#13-罗马数字转整数) 
+   * [14 最长公共前缀](#14-最长公共前缀) 
+   * [15 三数之和](#15-三数之和) 
+   * [16 最接近的三数之和](#16-最接近的三数之和) 
+   * [17 电话号码的字母组合](#17-电话号码的字母组合) 
+   * [18 四数之和](#18-四数之和) 
 
   
 
@@ -372,13 +384,1051 @@ class Solution:
 内存消耗 : 13.2 MB  
 
 
+### 6 Z字形变换  
+
+将一个给定字符串根据给定的行数，以从上往下、从左到右进行` Z `字形排列。
+
+比如输入字符串为` "LEETCODEISHIRING" `行数为` 3 `时，排列如下：
+```
+L   C   I   R
+E T O E S I I G
+E   D   H   N
+```
+之后，你的输出需要从左往右逐行读取，产生出一个新的字符串，比如："LCIRETOESIIGEDHN"。
+
+请你实现这个将字符串进行指定行数变换的函数：
+
+string convert(string s, int numRows);
+示例 1:
+```
+输入: s = "LEETCODEISHIRING", numRows = 3
+输出: "LCIRETOESIIGEDHN"
+```
+示例 2:
+```
+输入: s = "LEETCODEISHIRING", numRows = 4
+输出: "LDREOEIIECIHNTSG"
+解释:
+
+L     D     R
+E   O E   I I
+E C   I H   N
+T     S     G
+
+```
+
+思路一：将图形进行数学建模，发现Z字形符合一定的函数样式：
+
+```
+   |-------------------->  x
+   | L     D     R
+   | E   O E   I I
+   | E C   I H   N
+   | T     S     G
+ y v
+ 
+ 分段函数：  0 <= y < numRows
+ 
+            if x % (numRows-1) == 0 :
+                0 <= y < numRows 值全取
+            else:
+                只有一个值  x,y符合 (numRows-1-x-y) % (numRows-1) == 0 
+                其他位置使用''占位
+
+```
+新建二位数组，纵向遍历，将字符串中的字符按照规则，依次放入数组中，没有字符的位置使用''占位，对获得的二维数组进行横向遍历，转换为字符串，获得结果
+
+```python
+class Solution:
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+        if len(s) <= numRows or not numRows or not s or numRows == 1:
+            return s
+        x = 0
+        i = 0
+        res = list()
+        while 1:   # 对x遍历
+            if i >= len(s):
+                return ''.join([m[y] for y in range(numRows) for m in res])
+            res.append([])
+            if x % (numRows-1) == 0:   # 在纵向上的情况
+                for y in range(numRows):
+                    if i >= len(s):
+                        res[x].append('')
+                    else:
+                        res[x].append(s[i])
+                        i += 1
+            else:                        # 在斜线上情况，只有一个值
+                for y in range(numRows):
+                    if (numRows-1-x-y) % (numRows-1) == 0 and i < len(s) :
+                        res[x].append(s[i])
+                        i += 1
+                    else:
+                        res[x].append('')
+            x += 1
+```
+执行用时 : 1596 ms  
+内存消耗 : 18.2 MB  
+
+
+思路二：官方题解，按照与逐行读取 Z 字形图案相同的顺序访问字符串。
+
+最优解答：
+
+```
+
+L     D     R
+E   O E   I I
+E C   I H   N
+T     S     G
+
+
+L =  [  L , E , E , T  ]
+                C
+            O
+        D   E   I   S
+                H
+            I
+        R   I   N   G
+
+```
+
+
+```python
+
+class Solution:
+    def convert(self, s, numRows):
+        """
+        :type s: str
+        :type numRows: int
+        :rtype: str
+        """
+
+        if numRows == 1 or numRows >= len(s):
+            return s
+        L = [''] * numRows      # 创建结果列表，最终每个元素代表每一行结果
+        index, step = 0, 1    # 设定索引，也就是s中字符要放在L中的第一个元素后面， 设定步长，控制索引，实现Z字
+        for x in s:
+            L[index] += x
+            if index == 0:
+                step = 1
+            elif index == numRows - 1:
+                step = -1
+            index += step
+        return ''.join(L)
+```
+执行用时 : 136 ms  
+内存消耗 : 13.2 MB  
 
 
 
 
 
+执行用时 : 72 ms, 在Reverse Integer的Python3提交中击败了61.22% 的用户
+内存消耗 : 13.3 MB
+
+
+### 7 整数反转  
+
+给出一个` 32 `位的有符号整数，你需要将这个整数中每位上的数字进行反转。
+
+示例 1:
+```
+输入: 123
+输出: 321
+```
+ 示例 2:
+```
+输入: -123
+输出: -321
+```
+示例 3:
+```
+输入: 120
+输出: 21
+```
+注意:  
+
+假设我们的环境只能存储得下` 32 `位的有符号整数，则其数值范围为` [−2**31,  2**31 − 1]`。请根据这个假设，如果反转后整数溢出那么就返回 0。
+
+```python
+class Solution:
+    def reverse(self, x):
+        """
+        :type x: int
+        :rtype: int
+        """
+
+        res = int(''.join(list(str(x))[::-1])) if x>=0 else int('-'+''.join(list(str(-x))[::-1]))
+        
+        return res if res>=-2**31 and res<2**31-1 else 0
+```
+执行用时 : 72 ms  
+内存消耗 : 13.4 MB  
+
+
+网上最优：
+```python
+
+class Solution:
+    def reverse(self, x):
+      
+        num=0
+        a = abs(x)
+        while(a != 0):
+            temp =a % 10
+            num =num*10 +temp
+            a = int(a/10)
+            
+        if x>0 and num <2147483647:
+            return num
+        elif x<0 and num <=2147483647:
+            return -num
+        else:
+            return 0
+```
+
+### 8 字符串转换整数 (atoi)  
+请你来实现一个 atoi 函数，使其能将字符串转换成整数。  
+
+首先，该函数会根据需要丢弃无用的开头空格字符，直到寻找到第一个非空格的字符为止。  
+
+当我们寻找到的第一个非空字符为正或者负号时，则将该符号与之后面尽可能多的连续数字组合起来，作为该整数的正负号；假如第一个非空字符是数字，则直接将其与之后连续的数字字符组合起来，形成整数。  
+
+该字符串除了有效的整数部分之后也可能会存在多余的字符，这些字符可以被忽略，它们对于函数不应该造成影响。  
+
+注意：假如该字符串中的第一个非空格字符不是一个有效整数字符、字符串为空或字符串仅包含空白字符时，则你的函数不需要进行转换。  
+
+在任何情况下，若函数不能进行有效的转换时，请返回 0。  
+
+说明：  
+
+假设我们的环境只能存储 32 位大小的有符号整数，那么其数值范围为` [−2**31,  2**31 − 1]`。如果数值超过这个范围，请返回`−2**31`或`2**31 − 1` 。  
+
+示例 1:
+```
+输入: "42"
+输出: 42
+```
+示例 2:
+```
+输入: "   -42"
+输出: -42
+解释: 第一个非空白字符为 '-', 它是一个负号。
+     我们尽可能将负号与后面所有连续出现的数字组合起来，最后得到 -42 。
+ ```
+示例 3:
+```
+输入: "4193 with words"
+输出: 4193
+解释: 转换截止于数字 '3' ，因为它的下一个字符不为数字。
+```
+示例 4:
+```
+输入: "words and 987"
+输出: 0
+解释: 第一个非空字符是 'w', 但它不是数字或正、负号。
+     因此无法执行有效的转换。
+```
+示例 5:
+```
+输入: "-91283472332"
+输出: -2147483648
+解释: 数字 "-91283472332" 超过 32 位有符号整数范围。 
+     因此返回 INT_MIN (−231) 。
+```
+
+
+```python
+
+class Solution:
+    def myAtoi(self, str):
+        """
+        :type str: str
+        :rtype: int
+        """
+        
+        int_string = ['0','1','2','3','4','5','6','7','8','9']
+        str = str.lstrip()
+        res = ''
+        if not str:
+            return 0
+        if str[0] in ['-','+']:
+            res += str[0]
+            str = str[1:]
+        if not str or str[0] not in int_string:
+            return 0
+        for i in range(len(str)):
+            if str[i] not in int_string:
+                break
+            res += str[i]
+        res = int(res)
+        if res < -2**31:
+            return -2**31
+        elif res >= 2**31-1:
+            return 2**31-1
+        return res
+```
+执行用时 : 100 ms  
+内存消耗 : 13.2 MB  
+
+使用正则：
+
+```python
+class Solution:
+    def myAtoi(self, str):
+        """
+        :type str: str
+        :rtype: int
+        """
+        
+        import re
+        
+        p = re.compile(r'^((-|\+)\d+)|(\d+)')
+        re_p = p.match(str.lstrip())
+        if not re_p:
+            return 0
+        else:
+            res = int(re_p.group(0))
+
+        res = res if res >= -2**31 else -2**31
+        res = res if res < 2**31-1 else 2**31-1
+        return res
+```
+执行用时 : 80 ms  
+内存消耗 : 13.2 MB  
+
+
+### 9 回文数  
+
+判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
+
+示例 1:
+```
+输入: 121
+输出: true
+```
+示例 2:
+```
+输入: -121
+输出: false
+解释: 从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。
+```
+示例 3:
+```
+输入: 10
+输出: false
+解释: 从右向左读, 为 01 。因此它不是一个回文数。
+```
+
+直接对整数进行处理：
+```python
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        if x < 0:
+            return False
+        a = x
+        b = 0
+        while True:
+            b = b*10 + a % 10
+            if a < 10:
+                break
+            a = a // 10
+        
+        return b == x
+```
+执行用时 : 500 ms  
+内存消耗 : 13.3 MB  
+
+转换为str处理
+```python
+class Solution:
+    def isPalindrome(self, x: int) -> bool:
+        try:
+            if x==int(str(x)[::-1]):
+                return True
+            else:
+                return False
+        except:
+            return False
+```
+执行用时 : 308 ms  
+内存消耗 : 13.2 MB  
+
+
+### 10 正则表达式匹配  
+pass
+
+
+### 11 盛水最多的容器  
+给定 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
+
+说明：你不能倾斜容器，且 n 的值至少为 2。
+
+![示意图](./DOCS/images/question_11.jpg)
+
+示例:
+```
+输入: [1,8,6,2,5,4,8,3,7]
+输出: 49
+```
+
+思路及代码：
+```python
+class Solution:
+    def maxArea(self, height: List[int]) -> int:
+        # 思路一：双层循环，官方肯定不同意这么做滴，所以超时了
+        # max_v = 0
+        # for i in range(len(height)-1):
+        #     for j in range(i+1,len(height)):
+        #         v = height[i]*(j-i) if height[i]<height[j] else height[j]*(j-i)
+        #         max_v = max(max_v,v)
+        # return max_v
+        
+        
+        # 思路二：看了官方题解，使用动态规划：先选取最左侧和最右侧的两个柱子，计算出面积，作为初始值
+        # 接下来这两个柱子向内移动，矩形的长必然要变小，所以向内移动的柱子要选相对短的那根，留住相对高的柱子，来保证面积最优，下面是网友的题解
+        
+        i, j = 0, len(height) - 1
+        max_area = 0
+        while i < j:
+            if height[i] > height[j]:
+                area = (j - i) * height[j]
+                j -= 1
+            else:
+                area = (j - i) * height[i]
+                i += 1
+            if area > max_area:
+                max_area = area
+        return max_area
+```
+执行用时 : 72 ms  
+内存消耗 : 14.4 MB  
+
+### 12 整数转罗马数字  
+罗马数字包含以下七种字符： I， V， X， L，C，D 和 M。
+```
+字符          数值
+I             1
+V             5
+X             10
+L             50
+C             100
+D             500
+M             1000
+例如， 罗马数字 2 写做 II ，即为两个并列的 1。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V + II 。
+```
+
+通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：
+```
+I 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。
+X 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 
+C 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。
+```
+给定一个整数，将其转为罗马数字。输入确保在 1 到 3999 的范围内。
+
+示例 1:
+```
+输入: 3
+输出: "III"
+```
+示例 2:
+```
+输入: 4
+输出: "IV"
+```
+示例 3:
+```
+输入: 9
+输出: "IX"
+```
+示例 4:
+```
+输入: 58
+输出: "LVIII"
+解释: L = 50, V = 5, III = 3.
+```
+示例 5:
+```
+输入: 1994
+输出: "MCMXCIV"
+解释: M = 1000, CM = 900, XC = 90, IV = 4.
+```
+思路一：将千、百、十、个位数字分别建立字典，列出所有数字，对num拆分后在各自的字典里查找即可，这种方式很直接，官方肯定不认可滴，但是这种方法计算机运算效率更高，贴一下网友做的
+```python
+class Solution:
+    def intToRoman(self, num):
+        """
+        :type num: int
+        :rtype: str
+        """
+        romans = [
+            ['', 'M', 'MM', 'MMM'],
+            ['', 'C', 'CC', 'CCC', 'CD', 'D', 'DC', 'DCC', 'DCCC', 'CM'],
+            ['', 'X', 'XX', 'XXX', 'XL', 'L', 'LX', 'LXX', 'LXXX', 'XC'],
+            ['', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX']
+        ]
+        return romans[0][num // 1000] + romans[1][num%1000 // 100]\
+               + romans[2][num%100 // 10] + romans[3][num%10]
+```
+思路二：将特定罗马字符建立字典，对num拆分后再做查找
+
+```python
+class Solution:
+    def intToRoman(self, num: int) -> str:
+        Rom_str={1:'I' ,5:'V', 10:'X', 50:'L', 100:'C', 500:'D',1000:'M',
+                4:'IV', 9:'IX', 40:'XL', 90:'XC', 400:'CD', 900:'CM'}
+        res = ''  # 结果字符串
+        
+        for k in [1000,100,10,1]:
+            get_num = (num // k) * k
+            num = num % k
+            if get_num and get_num in Rom_str.keys():
+                res += Rom_str[get_num]
+            elif get_num and get_num//k <5:
+                res += Rom_str[k] * (get_num//k)
+            elif get_num:
+                res +=Rom_str[5*k] + Rom_str[k] * (get_num//k-5)
+                
+        return res
+```
+执行用时 : 156 ms  
+内存消耗 : 13.3 MB  
+
+最优解题：
+```python
+class Solution:
+    def intToRoman(self, num):
+        """
+        :type num: int
+        :rtype: str
+        """
+        res = ''
+        token = [(1000, 'M'), (900, 'CM'), (500, 'D'), (400, 'CD'), (100, 'C'), (90, 'XC'), (50, 'L'), (40, 'XL'), (10, 'X'), (9, 'IX'), (5, 'V'), (4, 'IV'), (1, 'I')]
+        for n, t in token:
+            while num >= n:
+                res += t;
+                num -= n
+        return res
+```
+执行用时 : 228 ms 提交后测试数据，肯定有问题！  
+内存消耗 : 13.2 MB
+
+
+### 13 罗马数字转整数  
+
+给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
+
+思路：简历换算字典，依次读取字符串，先判断是否是特殊情况
+
+```python
+class Solution:
+    def romanToInt(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        Rom_str={'I':1 ,'V':5, 'X':10, 'L':50, 'C':100, 'D':500,'M':1000, 'IV':4, 'IX':9, 'XL':40, 'XC':90, 'CD':400, 'CM':900}
+        
+        i = 0
+        res = 0
+        while i<len(s):
+            if len(s)>=2 and s[i:i+2] in Rom_str.keys():
+                res += Rom_str[s[i:i+2]]
+                i += 2
+            else:
+                res += Rom_str[s[i]]
+                i += 1
+        return res
+```
+执行用时 : 176 ms, 在Roman to Integer的Python3提交中击败了64.53% 的用户  
+内存消耗 : 13.3 MB, 在Roman to Integer的Python3提交中击败了0.95% 的用户   
+
+最优解答：
+```python
+
+class Solution:
+    def romanToInt(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        romandict = dict({'I':1, 'V':5, 'X':10, 'L':50, 'C':100, 'D':500, 'M':1000})
+        res = 0
+        if len(s) == 1:
+            return romandict[s[0]]
+        
+        
+        for i in range(len(s)-1):
+            cur=s[i]
+            nex=s[i+1]
+            if((cur=='C' and (nex=='D' or nex=='M')) or (cur=='X' and (nex=='L' or nex=='C')) or (cur=='I' and (nex=='V' or nex=='X'))):
+                res = res - romandict[cur]
+            else:
+                res = res + romandict[cur]
+        res = res + romandict[nex]
+        return res
+```
+ps:难道执行用时跟我的电脑有关？？？
+执行用时 : 168 ms, 在Roman to Integer的Python3提交中击败了69.13% 的用户  
+内存消耗 : 13.4 MB, 在Roman to Integer的Python3提交中击败了0.95% 的用户  
+
+### 14 最长公共前缀  
+编写一个函数来查找字符串数组中的最长公共前缀。
+
+如果不存在公共前缀，返回空字符串 ""。
+
+示例 1:
+```
+输入: ["flower","flow","flight"]
+输出: "fl"
+```
+示例 2:
+```
+输入: ["dog","racecar","car"]
+输出: ""
+解释: 输入不存在公共前缀。
+```
+说明:
+
+所有输入只包含小写字母 a-z 。
+
+
+思路一：使用最后一个元素作为初始结果，遍历该元素，从首字母开始依次同strs剩余元素的首字母做对比，依次进行，双循环
+
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs or '' in strs:
+            return ''
+        
+        res = strs.pop()
+        
+        for i in range(len(res)):
+            for str in strs:
+                try:
+                    if res[i] != str[i]:
+                        return res[:i]
+                except:
+                    return res[:i]
+        return res
+```
+执行用时 : 68 ms, 在Longest Common Prefix的Python3提交中击败了12.31% 的用户  
+内存消耗 : 13.2 MB, 在Longest Common Prefix的Python3提交中击败了0.98% 的用户  
+
+思路二：将strs进行排序，排序后，只需要对比首尾两个元素即可：
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if not strs or '' in strs:
+            return ''
+        
+        if len(strs) == 1:
+            return strs[0]
+        
+        strs.sort()
+        res = ''
+        
+        length = min(len(strs[0]),len(strs[-1]))
+        
+        for i in range(length):
+            if strs[0][i] == strs[-1][i] :
+                res += strs[0][i]
+            else:
+                break
+        return res
+```
+执行用时 : 56 ms, 在Longest Common Prefix的Python3提交中击败了39.85% 的用户  
+内存消耗 : 13.1 MB, 在Longest Common Prefix的Python3提交中击败了0.98% 的用户  
+
+最优解答：
+```python
+class Solution:
+    def longestCommonPrefix(self, strs: List[str]) -> str:
+        if len(strs) == 0:
+            return ''
+        if len(strs) == 1:
+            return strs[0]
+
+        prefix, chars = '', zip(*strs)
+        for i, group in enumerate(chars):
+            ch = group[0]
+            for j in range(1, len(group)):
+                if group[j] != ch:
+                    return prefix
+            prefix += strs[0][i]
+        return prefix
+```
+ps：请自行忽视。。。。。。
+执行用时 : 84 ms, 在Longest Common Prefix的Python3提交中击败了3.53% 的用户  
+内存消耗 : 13.3 MB, 在Longest Common Prefix的Python3提交中击败了0.98% 的用户   
 
 
 
+### 15 三数之和  
+
+给定一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？找出所有满足条件且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+```
+例如, 给定数组 nums = [-1, 0, 1, 2, -1, -4]，
+
+满足要求的三元组集合为：
+[
+  [-1, 0, 1],
+  [-1, -1, 2]
+]
+```
+
+思路一：双层循环查找，超时
+```python
+
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        res = list()    # 存储结果
+        for i in range(len(nums)-2):   # 获取a
+            for j in range(i+1,len(nums)-1):  # 获取b
+                if 0-nums[i]-nums[j] in nums[j+1:]:   # 判断是否存在c
+                    res_l = [nums[i],nums[j],0-nums[i]-nums[j]]
+                    res_l.sort()   # 排序，方便查重
+                    if res_l not in res:
+                        res.append(res_l)
+        return res
+```
+
+思路二：（网友解答）看注释
+```python
+class Solution:
+    def threeSum(self, nums: List[int]) -> List[List[int]]:
+        """
+        对于 a + b + c = 0 共有四种可能的结果
+        [0 0 0] [- + +] [- - +] [- 0 +]
+        """
+        ans = []  # 初始化结果
+        d = {}  # 重构nums,key=num,value=该值的个数
+        
+        for i in nums:
+            if i not in d:
+                d[i] = 0  # 将i存入d的key中
+            d[i] += 1
+        
+        posit = [a for a in d if a>0]
+        naga = [b for b in d if b<0]
+        
+        
+        
+        # [0 0 0]
+        if d.get(0,0)>2:
+            ans.append([0,0,0])
+        
+        if not posit or not naga:
+            return ans
+        
+        # [- + +]
+        for a,v in enumerate(posit):
+            if d[v]>1 and -2*v in d:
+                ans.append([v,v,-2*v])
+
+            for b in posit[a+1:]:
+                if -v-b in d:
+                    ans.append([v,b,-v-b])
+        
+        # [+ - -]
+        for a,v in enumerate(naga):
+            if d[v]>1 and -2*v in d:
+                ans.append([v,v,-2*v])
+                
+            for b in naga[a+1:]:
+                if -v-b in d:
+                    ans.append([v,b,-v-b])
+        
+        # [- 0 +]
+        if 0 in d:
+            for a in posit:
+                if -a in d:
+                    ans.append([a,-a,0])
+        return ans
+```
+执行用时 : 412 ms, 在3Sum的Python3提交中击败了98.97% 的用户  
+内存消耗 : 17.5 MB, 在3Sum的Python3提交中击败了3.86% 的用户  
 
 
+
+### 16 最接近的三数之和  
+
+给定一个包括 n 个整数的数组 nums 和 一个目标值 target。找出 nums 中的三个整数，使得它们的和与 target 最接近。返回这三个数的和。假定每组输入只存在唯一答案。
+```
+例如，给定数组 nums = [-1，2，1，-4], 和 target = 1.
+
+与 target 最接近的三个数的和为 2. (-1 + 2 + 1 = 2).
+```
+
+思路一：使用双层循环，先遍历整个列表，然后建立两个指针，向内移动
+```python
+class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        if len(nums) < 3:
+            return
+        nums.sort()
+        res = target - nums[0] - nums[1] - nums[2]  # 存储结果同target直接的差值
+        for i in range(len(nums) - 2):
+            left = i + 1  # 左指针
+            right = len(nums) - 1  # 右指针
+            while left < right:
+                k = target - nums[i] - nums[left] - nums[right]
+                if abs(k) < abs(res):
+                    res = k
+                if k > 0:
+                    left += 1
+                else:
+                    right -= 1
+        return target-res
+``` 
+执行用时 : 596 ms, 在3Sum Closest的Python3提交中击败了9.82% 的用户  
+内存消耗 : 13.2 MB, 在3Sum Closest的Python3提交中击败了2.33% 的用户  
+
+看过最优解答后，优化了自己的代码：
+```python
+
+class Solution:
+    def threeSumClosest(self, nums: List[int], target: int) -> int:
+        if len(nums) < 3:
+            return
+        nums.sort()
+        res = []  # 只用list存储三个数之和，最后统一处理，比每循环一次处理一次更效率  
+        for i in range(len(nums) - 2):
+            left = i + 1  # 左指针
+            right = len(nums) - 1  # 右指针
+            if nums[i] + nums[left] + nums[left+1] > target:    # 提前判断前三个数之和，提前跳出循环
+                res.append(nums[i] + nums[left] + nums[left+1])
+                break
+            elif  nums[i] + nums[right] + nums[right-1] < target:   # 添加循环判断
+                res.append(nums[i] + nums[right] + nums[right-1])
+            else:
+                while left < right:
+                    k = nums[i] + nums[left] + nums[right]
+                    res.append(k)
+                    if k == target:
+                        return target
+                    elif k < target:
+                        left += 1
+                    else:
+                        right -= 1
+                        
+        res.sort(key=lambda x: abs(x - target))    # 最后使用匿名函数获得差值数组，再进行排序，返回第一个值
+
+        return res[0]
+```
+
+执行用时 : 88 ms, 在3Sum Closest的Python3提交中击败了94.82% 的用户  
+内存消耗 : 13 MB, 在3Sum Closest的Python3提交中击败了2.33% 的用户  
+
+### 17 电话号码的字母组合  
+
+给定一个仅包含数字 2-9 的字符串，返回所有它能表示的字母组合。  
+
+给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。  
+![17题](./DOCS/images/200px-Telephone-keypad2.svg.png)
+
+示例:
+```
+输入："23"
+输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+说明:
+尽管上面的答案是按字典序排列的，但是你可以任意选择答案输出的顺序。
+```
+```python
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        # 双层循环,递归，属于满多叉树的遍历
+        num_dict={     # 建立转换字典
+            1:'',
+            2:['a','b','c'],
+            3:['d','e','f'],
+            4:['g','h','i'],
+            5:['j','k','l'],
+            6:['m','n','o'],
+            7:['p','q','r','s'],
+            8:['t','u','v'],
+            9:['w','x','y','z']
+        }
+        ans = []  # 返回结果
+        if len(digits) == 0:
+            return []
+        if len(digits) == 1:
+            return num_dict[int(digits)]
+        res = digits[1:] #剩余的可选字符
+        for i in self.letterCombinations(res):
+            for j in num_dict[int(digits[0])]:
+                ans.append(j+i)
+        return ans
+```
+
+执行用时 : 52 ms, 在Letter Combinations of a Phone Number的Python3提交中击败了27.88% 的用户  
+内存消耗 : 13 MB, 在Letter Combinations of a Phone Number的Python3提交中击败了0.71% 的用户  
+
+
+网上最优解答：思路非常好，当之无愧！
+```python
+
+class Solution:
+    def letterCombinations(self, digits: str) -> List[str]:
+        num={
+            '2':['a','b','c'],
+            '3':['d','e','f'],
+            '4':['g','h','i'],
+            '5':['j','k','l'],
+            '6':['m','n','o'],
+            '7':['p','q','r','s'],
+            '8':['t','u','v'],
+            '9':['w','x','y','z']
+        }
+        if len(digits)==0:
+            return []
+        res=['']   # 定义为''可进行第一次遍历入值
+        for i in range(len(digits)):   # 对digits进行遍历
+            dlist=num[digits[i]]   # 获取当前数字对于的字母列表
+            new_res=[]       # 初始化当前循环的结果
+            for j in range(len(res)):    # 对上一次结果进行遍历
+                for k in range(len(dlist)):    # 对当前数字的字母列表进行遍历
+                    new_res.append(res[j]+dlist[k])   # 将当前数字的字母依次结合到之前的结果上，保存到本次循环的结果上
+            del res[:]   # 删除上一次遍历的结果
+            res=new_res.copy()  # 将本次循环的结果复制给总结果
+        return res
+```
+
+### 18 四数之和  
+
+
+给定一个包含 n 个整数的数组 nums 和一个目标值 target，判断 nums 中是否存在四个元素 a，b，c 和 d ，使得 a + b + c + d 的值与 target 相等？找出所有满足条件且不重复的四元组。
+
+注意：
+
+答案中不可以包含重复的四元组。
+
+示例：
+```
+给定数组 nums = [1, 0, -1, 0, -2, 2]，和 target = 0。
+
+满足要求的四元组集合为：
+[
+  [-1,  0, 0, 1],
+  [-2, -1, 1, 2],
+  [-2,  0, 0, 2]
+]
+```
+
+思路一：从两数之和、三数之和，到现在的四数之和，也真是够了，先上个暴力的多层循环，超时了，本地正常使用
+```python
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        # 思路一：暴力模式，多层循环，已被抛弃
+        ans = []
+        length = len(nums)
+        for a in range(length-3):
+            for b in range(a+1,length-2):
+                for c in range(b+1,length-1):
+                    if target-nums[a]-nums[b]-nums[c] in nums[c+1:]:
+                        l = [nums[a],nums[b],nums[c],target-nums[a]-nums[b]-nums[c]]
+                        l.sort()
+                        if l not in ans:
+                            ans.append(l)
+        return ans
+```
+思路二：网上的递归方式，直接解决N数之和，妈妈再也不用担心我的多数求和问题了
+
+```python
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        def anySum(nums,target,N,result,results):
+            """
+            nums:待处理的数组
+            target:剩余的和值
+            N: 待处理的N个数之和，个数
+            result:临时结果值
+            results:最终结果值，符合Python列表数据的可变类型
+            """
+            if len(nums) < N or N < 2 or target < nums[0] * N or target > nums[-1] * N:  # 排除不良情况
+                return  
+            
+            if N == 2:  # 多个数求和过程，最终都落到了这里
+                l, r = 0, len(nums) - 1
+                while l < r:
+                    s = nums[l] + nums[r]
+                    if s == target:
+                        results.append(result+[nums[l],nums[r]])
+                        l += 1
+                        
+                        while l < r and nums[l] == nums[l-1]:  # 排除相等的数字，拒绝重复
+                            l += 1
+                            
+                    elif s < target:
+                        l += 1
+                    else:
+                        r -= 1
+            else:
+                for i in range(len(nums)-N+1):
+                    if i == 0 or (i>0 and nums[i-1] != nums[i]):
+                        anySum(nums[i+1:],target-nums[i],N-1,result+[nums[i]],results)
+        
+        results = []
+        anySum(sorted(nums),target,4,[],results)
+        return results
+```
+
+执行用时 : 132 ms, 在4Sum的Python3提交中击败了89.75% 的用户  
+内存消耗 : 13.3 MB, 在4Sum的Python3提交中击败了4.09% 的用户  
+
+最优代码：非递归方式完美解决，主要是优化了多层循环，设置多个条件，减少不必要的循环，思路不错  
+
+```python
+class Solution:
+    def fourSum(self, nums: List[int], target: int) -> List[List[int]]:
+        res = []
+        nums.sort()
+        # 这种求和为了减少步骤首先是排序比较  哎哎哎
+        a = nums[:4]
+        if sum(nums[:4]) > target:
+            return res
+        for index, num in enumerate(nums[:-3]):
+            target1 = target - num
+            if sum(nums[index: index + 4]) > target:
+                break
+                #下面的条件是最后的三个数比target1还小就是在target1固定的情况下达不到目标了
+                #或者是我现在的数和我上一次的数相同  确实 这种情况下不进行下一个循环就会重复
+                #记住 这个条件总的就是 要么达不到 要么会重复所以跳过
+            elif sum(nums[-3:]) < target1 or (index > 0 and num == nums[index - 1]):
+                continue
+                #在固定第一个后第二个数进行循环 因为是四个数所以截止到倒数第三个
+            for j in range(index + 1, len(nums) - 2):
+                target2 = target1 - nums[j]
+                #同样的道理 两种情况剔除
+                if nums[j + 1] + nums[j + 2] > target2:
+                    break
+                elif nums[-2] + nums[-1] < target2 or (j > index + 1 and nums[j] == nums[j - 1]):
+                    continue
+                    #再把特殊情况剔除后达到我们最后两个数的和等于目标  用双指针法  但为什么这么写会快很多啊 不是很懂 ：（
+                l, r = j + 1, len(nums) - 1
+                while l < r:
+                    temp = nums[l] + nums[r]
+                    if temp > target2:
+                        r -= 1
+                    elif temp < target2:
+                        l += 1
+                    else:
+                        res.append([num, nums[j], nums[l], nums[r]])
+                        while l < r and nums[l] == nums[l + 1]:
+                            l += 1
+                        while l < r and nums[r] == nums[r - 1]:
+                            r -= 1
+                        #相等之后确实两面都要移  不然会重复 因为这两个数相等的结果都有了
+                        l += 1
+                        r -= 1
+        return res
+```
+执行用时 : 100 ms, 在4Sum的Python3提交中击败了98.34% 的用户  
+内存消耗 : 13.1 MB, 在4Sum的Python3提交中击败了4.09% 的用户  
