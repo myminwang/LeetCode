@@ -7,7 +7,7 @@
    * [5 最长回文子串](#5-最长回文子串) 
    * [6 Z字形变换](#6-Z字形变换) 
    * [7 整数反转](#7-整数反转) 
-   * [8 字符串转换整数 (atoi) ](#8-字符串转换整数) 
+   * [8 字符串转换整数](#8-字符串转换整数) 
    * [9 回文数](#9-回文数) 
    * [10 正则表达式匹配](#10-正则表达式匹配) 
    * [12 整数转罗马数字](#12-整数转罗马数字) 
@@ -17,9 +17,14 @@
    * [16 最接近的三数之和](#16-最接近的三数之和) 
    * [17 电话号码的字母组合](#17-电话号码的字母组合) 
    * [18 四数之和](#18-四数之和) 
+   * [19 删除链表的倒数第N个节点](#19-删除链表的倒数第N个节点) 
+   * [20 有效的括号](#20-有效的括号) 
+   * [21 合并两个有序链表 ](#21-合并两个有序链表 ) 
+   * [22 括号生成](#22-括号生成) 
+   * [23 合并K个排序链表](#23-合并K个排序链表) 
+   * [24 两两交换链表中的节点](#24-两两交换链表中的节点) 
 
   
-
     
 
 #### 1 两数之和  
@@ -383,7 +388,6 @@ class Solution:
 执行用时 : 76 ms  
 内存消耗 : 13.2 MB  
 
-
 ### 6 Z字形变换  
 
 将一个给定字符串根据给定的行数，以从上往下、从左到右进行` Z `字形排列。
@@ -531,7 +535,6 @@ class Solution:
 执行用时 : 72 ms, 在Reverse Integer的Python3提交中击败了61.22% 的用户
 内存消耗 : 13.3 MB
 
-
 ### 7 整数反转  
 
 给出一个` 32 `位的有符号整数，你需要将这个整数中每位上的数字进行反转。
@@ -592,7 +595,7 @@ class Solution:
             return 0
 ```
 
-### 8 字符串转换整数 (atoi)  
+### 8 字符串转换整数  
 请你来实现一个 atoi 函数，使其能将字符串转换成整数。  
 
 首先，该函数会根据需要丢弃无用的开头空格字符，直到寻找到第一个非空格的字符为止。  
@@ -702,7 +705,6 @@ class Solution:
 执行用时 : 80 ms  
 内存消耗 : 13.2 MB  
 
-
 ### 9 回文数  
 
 判断一个整数是否是回文数。回文数是指正序（从左向右）和倒序（从右向左）读都是一样的整数。
@@ -759,10 +761,8 @@ class Solution:
 执行用时 : 308 ms  
 内存消耗 : 13.2 MB  
 
-
 ### 10 正则表达式匹配  
 pass
-
 
 ### 11 盛水最多的容器  
 给定 n 个非负整数 a1，a2，...，an，每个数代表坐标中的一个点 (i, ai) 。在坐标内画 n 条垂直线，垂直线 i 的两个端点分别为 (i, ai) 和 (i, 0)。找出其中的两条线，使得它们与 x 轴共同构成的容器可以容纳最多的水。
@@ -918,7 +918,6 @@ class Solution:
 执行用时 : 228 ms 提交后测试数据，肯定有问题！  
 内存消耗 : 13.2 MB
 
-
 ### 13 罗马数字转整数  
 
 给定一个罗马数字，将其转换成整数。输入确保在 1 到 3999 的范围内。
@@ -1067,8 +1066,6 @@ ps：请自行忽视。。。。。。
 执行用时 : 84 ms, 在Longest Common Prefix的Python3提交中击败了3.53% 的用户  
 内存消耗 : 13.3 MB, 在Longest Common Prefix的Python3提交中击败了0.98% 的用户   
 
-
-
 ### 15 三数之和  
 
 给定一个包含 n 个整数的数组 nums，判断 nums 中是否存在三个元素 a，b，c ，使得 a + b + c = 0 ？找出所有满足条件且不重复的三元组。
@@ -1155,8 +1152,6 @@ class Solution:
 ```
 执行用时 : 412 ms, 在3Sum的Python3提交中击败了98.97% 的用户  
 内存消耗 : 17.5 MB, 在3Sum的Python3提交中击败了3.86% 的用户  
-
-
 
 ### 16 最接近的三数之和  
 
@@ -1432,3 +1427,476 @@ class Solution:
 ```
 执行用时 : 100 ms, 在4Sum的Python3提交中击败了98.34% 的用户  
 内存消耗 : 13.1 MB, 在4Sum的Python3提交中击败了4.09% 的用户  
+
+### 19 删除链表的倒数第N个节点  
+给定一个链表，删除链表的倒数第 n 个节点，并且返回链表的头结点。
+
+示例：
+```
+给定一个链表: 1->2->3->4->5, 和 n = 2.
+
+当删除了倒数第二个节点后，链表变为 1->2->3->5.
+```
+说明：
+
+给定的 n 保证是有效的。
+
+思路一：使用强大而邪恶的eval()，获取n个`.next`添加到变量名中
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        # 链表的节点删除，就是跳过节点，直接连到下一个，要注意删除头节点和尾节点的情况
+        res = ListNode(0)
+        cur = res
+        res.next = head
+        while 1:
+            s = 'cur'+'.next'*(n+1)
+            del_point = eval(s)
+            if del_point == None:
+                cur.next = cur.next.next
+                break
+            cur = cur.next
+        
+        return res.next
+```
+执行用时 : 80 ms, 在Remove Nth Node From End of List的Python3提交中击败了4.14% 的用户  
+内存消耗 : 13.3 MB, 在Remove Nth Node From End of List的Python3提交中击败了0.57% 的用户  
+
+思路二：链表变列表，删除后，再生成链表,两个循环，O(n):
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        mid_l = []
+        while head:
+            mid_l.append(head.val)
+            head = head.next
+        del mid_l[-n]
+        if not mid_l:
+            return []
+        res = ListNode(mid_l[0])
+        cur = res
+        for mid_ in mid_l[1:]:
+            cur.next = ListNode(mid_)
+            cur = cur.next
+        return res
+```
+执行用时 : 76 ms, 在Remove Nth Node From End of List的Python3提交中击败了5.07% 的用户  
+内存消耗 : 13.1 MB, 在Remove Nth Node From End of List的Python3提交中击败了0.57% 的用户  
+
+
+思路三：中规中矩的方法，在设定两个游标，先移动一个游标，使得两个游标相隔n-1，再同时移动游标，当前面的游标到尾部时，后面的游标执行删除
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        dummy = ListNode(0)    # 考虑删除头结点的情况
+        dummy.next = head    
+        fast = dummy
+        slow = dummy
+        for i in range(n):     # 将两个游标间隔n-1
+            fast = fast.next
+        
+        while fast.next != None:    # 同时移动两个游标，当前面的游标移动至尾部时，结束移动
+            fast = fast.next    
+            slow = slow.next
+            
+        slow.next = slow.next.next   # 执行删除
+        return dummy.next
+
+```
+执行用时 : 60 ms, 在Remove Nth Node From End of List的Python3提交中击败了38.15% 的用户  
+内存消耗 : 13.3 MB, 在Remove Nth Node From End of List的Python3提交中击败了0.57% 的用户  
+
+
+最优解答：使用双向链表的思路，指定前节点，先遍历至尾节点，再回溯到删除点，执行删除
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def removeNthFromEnd(self, head: ListNode, n: int) -> ListNode:
+        node = head
+        node.prev = None     
+        while node.next:
+            temp = node
+            node = node.next
+            node.prev = temp
+        for i in range(n - 1):
+            node = node.prev
+        if(node.prev):
+            node.prev.next = node.next
+        else:
+            head = node.next
+        return head
+```
+执行用时 : 60 ms, 在Remove Nth Node From End of List的Python3提交中击败了38.15% 的用户  
+内存消耗 : 13 MB, 在Remove Nth Node From End of List的Python3提交中击败了0.57% 的用户  
+
+### 20 有效的括号
+给定一个只包括 `'('，')'`，`'{'，'}'`，`'['，']'` 的字符串，判断字符串是否有效。
+
+有效字符串需满足：
+
+左括号必须用相同类型的右括号闭合。
+左括号必须以正确的顺序闭合。
+注意空字符串可被认为是有效字符串。
+
+示例 1:
+```
+输入: "()"
+输出: true
+```
+示例 2:
+```
+输入: "()[]{}"
+输出: true
+```
+示例 3:
+```
+输入: "(]"
+输出: false
+```
+示例 4:
+```
+输入: "([)]"
+输出: false
+```
+示例 5:
+```
+输入: "{[]}"
+输出: true
+```
+思路分析：看代码
+```python
+class Solution:
+    def isValid(self, s: str) -> bool:
+        res = []   # 结果，空栈
+        for i in s:
+            if i in  ['(','{','[']:   # 可以用'({[',但是效率低
+                res.append(i)   # 入栈
+            elif not res:
+                return False   # 空栈时，出现右括号
+            else:
+                cur = res.pop()   
+                if (cur == '(' and i == ')') or (cur == '{' and i == '}')  or (cur == '[' and i == ']'):
+                    continue   # 判断是否匹配，如是，出栈
+                else:
+                    return False
+        return not res
+```
+执行用时 : 52 ms, 在Valid Parentheses的Python3提交中击败了45.24% 的用户
+内存消耗 : 13.1 MB, 在Valid Parentheses的Python3提交中击败了0.90% 的用户
+
+最优代码：
+```python
+class Solution:
+    def isValid(self, s):
+        """
+        :type s: str
+        :rtype: bool
+        """
+        
+        def pair(c):      # 将判断交给函数
+            if c == ')':
+                return '('
+            if c == '}':
+                return '{'
+            if c == ']':
+                return '['
+                
+        st = []
+        for c in s:
+            if c in ['(', '{', '[']:
+                st.append(c)
+            elif len(st) == 0:
+                return False
+            elif st[-1] == pair(c):
+                st.pop()
+            else:
+                return False
+        if len(st) == 0:
+            return True
+        return False
+```
+执行用时 : 52 ms, 在Valid Parentheses的Python3提交中击败了45.24% 的用户  
+内存消耗 : 13 MB, 在Valid Parentheses的Python3提交中击败了0.90% 的用户  
+
+### 21 合并两个有序链表  
+将两个有序链表合并为一个新的有序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+示例：
+```
+输入：1->2->4, 1->3->4
+输出：1->1->2->3->4->4
+```
+
+思路一： 将链表转换为列表，排序后，转换为链表
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        # 思路一： 将链表转换为列表，排序后，转换为链表
+        if not l1: return l2
+        if not l2: return l1
+        
+        ll1 = []
+        ll2 = []
+        while l1:
+            ll1.append(l1.val)
+            l1 = l1.next
+        while l2:
+            ll2.append(l2.val)
+            l2 = l2.next
+        
+        ll3 = ll1 + ll2
+        ll3.sort()
+        res = ListNode(ll3[0])
+        cur = res
+        for ll3_ in ll3[1:]:
+            cur.next = ListNode(ll3_)
+            cur = cur.next
+        return res
+```
+执行用时 : 80 ms, 在Merge Two Sorted Lists的Python3提交中击败了8.51% 的用户  
+内存消耗 : 13 MB, 在Merge Two Sorted Lists的Python3提交中击败了0.98% 的用户  
+
+
+
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        # 思路二：原地拼接
+        phead=ListNode(0)   # 新建结果链表
+        p=phead
+        while l1 and l2:    # 遍历两个链表，依次将小的值放入结果中
+            if l1.val<l2.val:
+                p.next=l1
+                l1=l1.next
+            else:
+                p.next=l2
+                l2=l2.next
+            p=p.next
+        if l1:
+            p.next=l1
+        if l2:
+            p.next=l2
+        return phead.next
+```
+执行用时 : 64 ms, 在Merge Two Sorted Lists的Python3提交中击败了49.37% 的用户  
+内存消耗 : 13.1 MB, 在Merge Two Sorted Lists的Python3提交中击败了0.98% 的用户  
+
+最优解答：递归
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def mergeTwoLists(self, l1: ListNode, l2: ListNode) -> ListNode:
+        if l1 is None and l2 is None:
+            return None
+        if l1 is None and l2 is not None:
+            return l2
+        if l1 is not None and l2 is None:
+            return l1
+        
+        if l1.val > l2.val:
+            l2.next = self.mergeTwoLists(l1, l2.next)
+            return l2
+        else:
+            l1.next = self.mergeTwoLists(l1.next, l2)
+            return l1
+```
+执行用时 : 64 ms, 在Merge Two Sorted Lists的Python3提交中击败了49.37% 的用户  
+内存消耗 : 12.9 MB, 在Merge Two Sorted Lists的Python3提交中击败了0.98% 的用户  
+
+### 22 括号生成
+给出 n 代表生成括号的对数，请你写出一个函数，使其能够生成所有可能的并且有效的括号组合。
+
+例如，给出 n = 3，生成结果为：
+```
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+```
+
+最优解答：递归
+```python
+class Solution:
+    def generateParenthesis(self, n: int) -> List[str]:
+        self.res= []   # 结果
+        self.generateParenthesisIter('',n,n)   # 调用生成函数
+        return self.res
+    def generateParenthesisIter(self,mstr,r,l):  # 参数分别为：当前字符串、剩余右括号数、剩余左括号数
+        if r==0 and l==0:  # 递归结束
+            self.res.append(mstr)
+        if l>0:      #如果左括号的个数还有剩余，则+’(‘然后递归
+            self.generateParenthesisIter(mstr+'(',r,l-1)
+        if r>0 and r>l:   #如果右括号有剩余，且大于左括号的个数则+‘）’
+            self.generateParenthesisIter(mstr+')',r-1,l)
+
+```
+执行用时 : 56 ms, 在Generate Parentheses的Python3提交中击败了49.61% 的用户  
+内存消耗 : 13.3 MB, 在Generate Parentheses的Python3提交中击败了1.88% 的用户  
+
+### 23 合并K个排序链表  
+合并 k 个排序链表，返回合并后的排序链表。请分析和描述算法的复杂度。
+
+示例:
+```
+输入:
+[
+  1->4->5,
+  1->3->4,
+  2->6
+]
+输出: 1->1->2->3->4->4->5->6
+```
+思路一：转列表处理
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def mergeKLists(self, lists: List[ListNode]) -> ListNode:        
+        if len(lists) == 0:
+            return []
+        if len(lists) == 1:
+            return lists[0]
+        
+        temp = []
+        for ll in lists:
+            while ll:
+                temp.append(ll.val)
+                ll = ll.next
+        temp.sort()
+        ans = ListNode(0)
+        cur = ans
+        for t in temp:
+            cur.next = ListNode(t)
+            cur = cur.next
+        return ans.next
+```
+执行用时 : 168 ms, 在Merge k Sorted Lists的Python3提交中击败了39.10% 的用户  
+内存消耗 : 17.2 MB, 在Merge k Sorted Lists的Python3提交中击败了4.16% 的用户  
+
+最优解答：  attrgetter() 函数通常会运行的快点，并且还能同时允许多个字段进行比较
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+from operator import attrgetter
+
+class Solution:
+    # @param a list of ListNode
+    # @return a ListNode
+    def mergeKLists(self, lists):
+        sorted_list = []
+        for head in lists:
+            curr = head
+            while curr is not None:
+                sorted_list.append(curr)
+                curr = curr.next
+
+        sorted_list = sorted(sorted_list, key=attrgetter('val'))
+        for i, node in enumerate(sorted_list):
+            try:
+                node.next = sorted_list[i + 1]
+            except:
+                node.next = None
+
+        if sorted_list:
+            return sorted_list[0]
+        else:
+            return None
+```
+执行用时 : 116 ms, 在Merge k Sorted Lists的Python3提交中击败了68.43% 的用户  
+内存消耗 : 16.6 MB, 在Merge k Sorted Lists的Python3提交中击败了4.16% 的用户  
+
+### 24 两两交换链表中的节点  
+给定一个链表，两两交换其中相邻的节点，并返回交换后的链表。
+
+你不能只是单纯的改变节点内部的值，而是需要实际的进行节点交换。
+
+ 
+
+示例:
+```
+给定 1->2->3->4, 你应该返回 2->1->4->3.
+```
+
+分析：
+![24题](./DOCS/images/24.png)
+
+```python
+# Definition for singly-linked list.
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def swapPairs(self, head: ListNode) -> ListNode:
+        HEAD = ListNode(0)
+        HEAD.next = head
+        pre = HEAD
+        while head and head.next:
+            cur = head
+            temp = head.next
+            
+            head = temp.next    # 1
+            pre.next = temp
+            temp.next = cur
+            cur.next = head
+            
+            pre = cur
+
+        return HEAD.next
+```
+执行用时 : 56 ms, 在Swap Nodes in Pairs的Python3提交中击败了13.64% 的用户  
+内存消耗 : 13.1 MB, 在Swap Nodes in Pairs的Python3提交中击败了0.66% 的用户  
+
+
